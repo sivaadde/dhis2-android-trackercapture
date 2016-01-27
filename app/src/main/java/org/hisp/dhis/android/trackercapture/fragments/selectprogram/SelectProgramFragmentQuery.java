@@ -171,10 +171,7 @@ class SelectProgramFragmentQuery implements Query<SelectProgramFragmentForm> {
                 }
 
                 String value = teav.getValue();
-                if(trackedEntityAttribute.isOptionSetValue()) {
-                    if(trackedEntityAttribute.getOptionSet() == null) {
-                        continue;
-                    }
+                if(trackedEntityAttribute.getOptionSet() != null) {
                     OptionSet optionSet = MetaDataController.getOptionSet(trackedEntityAttribute.getOptionSet());
                     if(optionSet == null) {
                         continue;
