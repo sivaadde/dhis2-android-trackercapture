@@ -71,13 +71,14 @@ import org.hisp.dhis.android.trackercapture.fragments.selectprogram.dialogs.Item
 import org.hisp.dhis.android.trackercapture.fragments.selectprogram.dialogs.QueryTrackedEntityInstancesDialogFragment;
 import org.hisp.dhis.android.trackercapture.fragments.upcomingevents.UpcomingEventsFragment;
 import org.hisp.dhis.android.trackercapture.ui.adapters.TrackedEntityInstanceAdapter;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelectProgramFragment extends org.hisp.dhis.android.sdk.ui.fragments.selectprogram.SelectProgramFragment
         implements SearchView.OnQueryTextListener, SearchView.OnFocusChangeListener,
-        MenuItemCompat.OnActionExpandListener, LoaderManager.LoaderCallbacks<SelectProgramFragmentForm>{
+        MenuItemCompat.OnActionExpandListener, LoaderManager.LoaderCallbacks<SelectProgramFragmentForm>, org.hisp.dhis.android.trackercapture.fragments.selectprogram.IEnroller {
     public static final String TAG = SelectProgramFragment.class.getSimpleName();
 
     private FloatingActionButton mRegisterEventButton;
@@ -166,9 +167,9 @@ public class SelectProgramFragment extends org.hisp.dhis.android.sdk.ui.fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.register_new_event: {
-                EnrollmentDataEntryFragment enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId());
-                mNavigationHandler.switchFragment(enrollmentDataEntryFragment, EnrollmentDataEntryFragment.class.getName(), true);
-
+//                EnrollmentDataEntryFragment enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId());
+//                mNavigationHandler.switchFragment(enrollmentDataEntryFragment, EnrollmentDataEntryFragment.class.getName(), true);
+                createEnrollment();
                 break;
             }
             case R.id.upcoming_events_button: {
@@ -182,7 +183,12 @@ public class SelectProgramFragment extends org.hisp.dhis.android.sdk.ui.fragment
             }
         }
     }
-
+    private void createEnrollment() {
+        EnrollmentDateSetterHelper.createEnrollment(this, getActivity(), mForm.getProgram().
+                        getDisplayIncidentDate(), mForm.getProgram().getSelectEnrollmentDatesInFuture(),
+                mForm.getProgram().getSelectIncidentDatesInFuture(), mForm.getProgram().getDateOfEnrollmentDescription(),
+                mForm.getProgram().getDateOfIncidentDescription());
+    }
     private static final void showQueryTrackedEntityInstancesDialog(FragmentManager fragmentManager, String orgUnit, String program) {
         QueryTrackedEntityInstancesDialogFragment dialog = QueryTrackedEntityInstancesDialogFragment.newInstance(program, orgUnit);
         dialog.show(fragmentManager);
@@ -384,5 +390,21 @@ public class SelectProgramFragment extends org.hisp.dhis.android.sdk.ui.fragment
             }
         }
         return true;
+    }
+
+    @Override
+    public void showEnrollmentFragment(TrackedEntityInstance trackedEntityInstance, DateTime enrollmentDate, DateTime incidentDate) {
+        String enrollmentDateString = enrollmentDate.toString();
+        String incidentDateString = null;
+        if(incidentDate != null) {
+            incidentDateString = incidentDate.toString();
+        }
+        EnrollmentDataEntryFragment enrollmentDataEntryFragment;
+        if(trackedEntityInstance == null) {
+            enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId(), enrollmentDateString, incidentDateString);
+        } else {
+            enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId(), trackedEntityInstance.getLocalId(), enrollmentDateString, incidentDateString);
+        }
+        mNavigationHandler.switchFragment(enrollmentDataEntryFragment, EnrollmentDataEntryFragment.class.getName(), true);
     }
 }

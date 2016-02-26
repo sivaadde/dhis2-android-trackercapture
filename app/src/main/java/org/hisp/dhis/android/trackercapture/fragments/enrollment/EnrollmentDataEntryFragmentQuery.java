@@ -41,20 +41,81 @@ class EnrollmentDataEntryFragmentQuery implements Query<EnrollmentDataEntryFragm
     private long mTrackedEntityInstanceId;
     private TrackedEntityInstance currentTrackedEntityInstance;
     private Enrollment currentEnrollment;
+    private final String enrollmentDate;
+    private final String incidentDate;
 
-    EnrollmentDataEntryFragmentQuery(String mOrgUnitId, String mProgramId, long mTrackedEntityInstanceId) {
+    EnrollmentDataEntryFragmentQuery(String mOrgUnitId, String mProgramId, long mTrackedEntityInstanceId,
+                                     String enrollmentDate, String incidentDate) {
         this.mOrgUnitId = mOrgUnitId;
         this.mProgramId = mProgramId;
         this.mTrackedEntityInstanceId = mTrackedEntityInstanceId;
+        this.enrollmentDate = enrollmentDate;
+        this.incidentDate = incidentDate;
     }
 
 
+//    @Override
+//    public EnrollmentDataEntryFragmentForm query(Context context) {
+//        Log.d(CLASS_TAG, "query");
+//        EnrollmentDataEntryFragmentForm mForm = new EnrollmentDataEntryFragmentForm();
+//        final Program mProgram = MetaDataController.getProgram(mProgramId);
+//        final OrganisationUnit mOrgUnit = MetaDataController.getOrganisationUnit(mOrgUnitId);//Select.byId(OrganisationUnit.class, mOrgUnitId);
+//
+//        if (mProgram == null) {
+//            return mForm;
+//        }
+//        if (mOrgUnit == null) {
+//            return mForm;
+//        }
+//
+//
+//        if (mTrackedEntityInstanceId < 0) {
+//            currentTrackedEntityInstance = new TrackedEntityInstance(mProgram, mOrgUnitId);
+//        } else {
+//            currentTrackedEntityInstance = TrackerController.getTrackedEntityInstance(mTrackedEntityInstanceId);
+//        }
+//
+//        currentEnrollment = new Enrollment(mOrgUnitId, currentTrackedEntityInstance.getTrackedEntityInstance(), mProgram);
+//
+//        mForm.setProgram(mProgram);
+//        mForm.setOrganisationUnit(mOrgUnit);
+//        mForm.setDataElementNames(new HashMap<String, String>());
+//        mForm.setDataEntryRows(new ArrayList<Row>());
+//        mForm.setTrackedEntityInstance(currentTrackedEntityInstance);
+//
+//        List<TrackedEntityAttributeValue> trackedEntityAttributeValues = new ArrayList<>();
+//        List<ProgramTrackedEntityAttribute> programTrackedEntityAttributes = mProgram.getProgramTrackedEntityAttributes();
+//        List<Row> dataEntryRows = new ArrayList<>();
+//
+//        dataEntryRows.add(new EnrollmentDatePickerRow(currentEnrollment.getProgram().getDateOfEnrollmentDescription(), currentEnrollment, currentEnrollment.getDateOfEnrollment()));
+//
+//        if(currentEnrollment.getProgram().getDisplayIncidentDate())
+//            dataEntryRows.add(new IncidentDatePickerRow(currentEnrollment.getProgram().getDateOfIncidentDescription(),currentEnrollment, currentEnrollment.getDateOfIncident()));
+//
+//
+//        for (ProgramTrackedEntityAttribute ptea : programTrackedEntityAttributes) {
+//            TrackedEntityAttributeValue value = TrackerController.getTrackedEntityAttributeValue(ptea.getTrackedEntityAttributeId(), currentTrackedEntityInstance.getLocalId());
+//            if (value != null) {
+//                trackedEntityAttributeValues.add(value);
+//            }
+//
+//        }
+//        currentEnrollment.setAttributes(trackedEntityAttributeValues);
+//        for (int i = 0; i < programTrackedEntityAttributes.size(); i++) {
+//            Row row = createDataEntryView(programTrackedEntityAttributes.get(i).getTrackedEntityAttribute(),
+//                    getTrackedEntityDataValue(programTrackedEntityAttributes.get(i).getTrackedEntityAttribute().getUid(), trackedEntityAttributeValues));
+//            dataEntryRows.add(row);
+//        }
+//        mForm.setDataEntryRows(dataEntryRows);
+//        mForm.setEnrollment(currentEnrollment);
+//        return mForm;
+//    }
+
     @Override
     public EnrollmentDataEntryFragmentForm query(Context context) {
-        Log.d(CLASS_TAG, "query");
         EnrollmentDataEntryFragmentForm mForm = new EnrollmentDataEntryFragmentForm();
         final Program mProgram = MetaDataController.getProgram(mProgramId);
-        final OrganisationUnit mOrgUnit = MetaDataController.getOrganisationUnit(mOrgUnitId);//Select.byId(OrganisationUnit.class, mOrgUnitId);
+        final OrganisationUnit mOrgUnit = MetaDataController.getOrganisationUnit(mOrgUnitId);
 
         if (mProgram == null) {
             return mForm;
@@ -63,20 +124,20 @@ class EnrollmentDataEntryFragmentQuery implements Query<EnrollmentDataEntryFragm
             return mForm;
         }
 
-
         if (mTrackedEntityInstanceId < 0) {
             currentTrackedEntityInstance = new TrackedEntityInstance(mProgram, mOrgUnitId);
         } else {
             currentTrackedEntityInstance = TrackerController.getTrackedEntityInstance(mTrackedEntityInstanceId);
         }
 
-        currentEnrollment = new Enrollment(mOrgUnitId, currentTrackedEntityInstance.getTrackedEntityInstance(), mProgram);
+        currentEnrollment = new Enrollment(mOrgUnitId, currentTrackedEntityInstance.getTrackedEntityInstance(), mProgram, enrollmentDate, incidentDate);
 
         mForm.setProgram(mProgram);
         mForm.setOrganisationUnit(mOrgUnit);
         mForm.setDataElementNames(new HashMap<String, String>());
         mForm.setDataEntryRows(new ArrayList<Row>());
         mForm.setTrackedEntityInstance(currentTrackedEntityInstance);
+        mForm.setTrackedEntityAttributeValueMap(new HashMap<String, TrackedEntityAttributeValue>());
 
         List<TrackedEntityAttributeValue> trackedEntityAttributeValues = new ArrayList<>();
         List<ProgramTrackedEntityAttribute> programTrackedEntityAttributes = mProgram.getProgramTrackedEntityAttributes();
@@ -84,22 +145,24 @@ class EnrollmentDataEntryFragmentQuery implements Query<EnrollmentDataEntryFragm
 
         dataEntryRows.add(new EnrollmentDatePickerRow(currentEnrollment.getProgram().getDateOfEnrollmentDescription(), currentEnrollment, currentEnrollment.getDateOfEnrollment()));
 
-        if(currentEnrollment.getProgram().getDisplayIncidentDate())
-            dataEntryRows.add(new IncidentDatePickerRow(currentEnrollment.getProgram().getDateOfIncidentDescription(),currentEnrollment, currentEnrollment.getDateOfIncident()));
-
+        if(currentEnrollment.getProgram().getDisplayIncidentDate()) {
+            dataEntryRows.add(new IncidentDatePickerRow(currentEnrollment.getProgram().getDateOfIncidentDescription(), currentEnrollment, currentEnrollment.getDateOfIncident()));
+        }
 
         for (ProgramTrackedEntityAttribute ptea : programTrackedEntityAttributes) {
             TrackedEntityAttributeValue value = TrackerController.getTrackedEntityAttributeValue(ptea.getTrackedEntityAttributeId(), currentTrackedEntityInstance.getLocalId());
             if (value != null) {
                 trackedEntityAttributeValues.add(value);
             }
-
         }
         currentEnrollment.setAttributes(trackedEntityAttributeValues);
         for (int i = 0; i < programTrackedEntityAttributes.size(); i++) {
-            Row row = createDataEntryView(programTrackedEntityAttributes.get(i).getTrackedEntityAttribute(),
+            Row row = createDataEntryView(programTrackedEntityAttributes.get(i), programTrackedEntityAttributes.get(i).getTrackedEntityAttribute(),
                     getTrackedEntityDataValue(programTrackedEntityAttributes.get(i).getTrackedEntityAttribute().getUid(), trackedEntityAttributeValues));
             dataEntryRows.add(row);
+        }
+        for(TrackedEntityAttributeValue trackedEntityAttributeValue : trackedEntityAttributeValues) {
+            mForm.getTrackedEntityAttributeValueMap().put(trackedEntityAttributeValue.getTrackedEntityAttributeId(), trackedEntityAttributeValue);
         }
         mForm.setDataEntryRows(dataEntryRows);
         mForm.setEnrollment(currentEnrollment);
@@ -121,7 +184,8 @@ class EnrollmentDataEntryFragmentQuery implements Query<EnrollmentDataEntryFragm
         return trackedEntityAttributeValue;
     }
 
-    public Row createDataEntryView(TrackedEntityAttribute trackedEntityAttribute, TrackedEntityAttributeValue dataValue) {
+    public Row createDataEntryView(ProgramTrackedEntityAttribute programTrackedEntityAttribute,
+                                   TrackedEntityAttribute trackedEntityAttribute, TrackedEntityAttributeValue dataValue) {
         Row row;
         String trackedEntityAttributeName = trackedEntityAttribute.getName();
         if (trackedEntityAttribute.getOptionSet() != null) {
@@ -150,7 +214,7 @@ class EnrollmentDataEntryFragmentQuery implements Query<EnrollmentDataEntryFragm
         } else if (trackedEntityAttribute.getValueType().equalsIgnoreCase(DataElement.VALUE_TYPE_TRUE_ONLY)) {
             row = new CheckBoxRow(trackedEntityAttributeName, dataValue);
         } else if (trackedEntityAttribute.getValueType().equalsIgnoreCase(DataElement.VALUE_TYPE_DATE)) {
-            row = new DatePickerRow(trackedEntityAttributeName, dataValue);
+            row = new DatePickerRow(trackedEntityAttributeName, dataValue, programTrackedEntityAttribute.getAllowFutureDate());
         } else if (trackedEntityAttribute.getValueType().equalsIgnoreCase(DataElement.VALUE_TYPE_STRING)) {
             row = new EditTextRow(trackedEntityAttributeName, dataValue, DataEntryRowTypes.LONG_TEXT);
         } else {

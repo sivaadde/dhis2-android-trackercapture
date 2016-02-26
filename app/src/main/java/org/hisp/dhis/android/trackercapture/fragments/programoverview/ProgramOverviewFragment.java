@@ -94,6 +94,8 @@ import org.hisp.dhis.android.trackercapture.R;
 import org.hisp.dhis.android.trackercapture.fragments.enrollment.EnrollmentDataEntryFragment;
 import org.hisp.dhis.android.trackercapture.fragments.enrollmentdate.EnrollmentDateFragment;
 import org.hisp.dhis.android.trackercapture.fragments.programoverview.registerrelationshipdialogfragment.RegisterRelationshipDialogFragment;
+import org.hisp.dhis.android.trackercapture.fragments.selectprogram.EnrollmentDateSetterHelper;
+import org.hisp.dhis.android.trackercapture.fragments.selectprogram.IEnroller;
 import org.hisp.dhis.android.trackercapture.fragments.selectprogram.dialogs.ItemStatusDialogFragment;
 import org.hisp.dhis.android.trackercapture.fragments.trackedentityinstanceprofile.TrackedEntityInstanceProfileFragment;
 import org.hisp.dhis.android.trackercapture.ui.adapters.ProgramAdapter;
@@ -102,6 +104,7 @@ import org.hisp.dhis.android.trackercapture.ui.rows.programoverview.OnProgramSta
 import org.hisp.dhis.android.trackercapture.ui.rows.programoverview.ProgramStageEventRow;
 import org.hisp.dhis.android.trackercapture.ui.rows.programoverview.ProgramStageLabelRow;
 import org.hisp.dhis.android.trackercapture.ui.rows.programoverview.ProgramStageRow;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -115,7 +118,7 @@ import java.util.Map;
 public class ProgramOverviewFragment extends Fragment implements View.OnClickListener,
         AdapterView.OnItemClickListener,
         ProgramDialogFragment.OnOptionSelectedListener,
-        LoaderManager.LoaderCallbacks<ProgramOverviewFragmentForm>, AdapterView.OnItemSelectedListener, SwipeRefreshLayout.OnRefreshListener {
+        LoaderManager.LoaderCallbacks<ProgramOverviewFragmentForm>, AdapterView.OnItemSelectedListener, SwipeRefreshLayout.OnRefreshListener, IEnroller {
 
     public static final String CLASS_TAG = ProgramOverviewFragment.class.getSimpleName();
     private static final String STATE = "state:UpcomingEventsFragment";
@@ -794,10 +797,33 @@ public class ProgramOverviewFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    public void enroll() {
-        EnrollmentDataEntryFragment enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId(), mState.getTrackedEntityInstanceId());
+    private void createEnrollment() {
+        EnrollmentDateSetterHelper.createEnrollment(mForm.getTrackedEntityInstance(), this, getActivity(), mForm.getProgram().
+                        getDisplayIncidentDate(), mForm.getProgram().getSelectEnrollmentDatesInFuture(),
+                mForm.getProgram().getSelectIncidentDatesInFuture(), mForm.getProgram().getDateOfEnrollmentDescription(),
+                mForm.getProgram().getDateOfIncidentDescription());
+    }
+
+    @Override
+    public void showEnrollmentFragment(TrackedEntityInstance trackedEntityInstance, DateTime enrollmentDate, DateTime incidentDate) {
+        String enrollmentDateString = enrollmentDate.toString();
+        String incidentDateString = null;
+        if(incidentDate != null) {
+            incidentDateString = incidentDate.toString();
+        }
+        EnrollmentDataEntryFragment enrollmentDataEntryFragment;
+        if(trackedEntityInstance == null) {
+            enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId(), enrollmentDateString, incidentDateString);
+        } else {
+            enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId(), trackedEntityInstance.getLocalId(), enrollmentDateString, incidentDateString);
+        }
         mNavigationHandler.switchFragment(enrollmentDataEntryFragment, EnrollmentDataEntryFragment.class.getName(), true);
     }
+
+//    public void enroll() {
+//        EnrollmentDataEntryFragment enrollmentDataEntryFragment = EnrollmentDataEntryFragment.newInstance(mState.getOrgUnitId(), mState.getProgramId(), mState.getTrackedEntityInstanceId());
+//        mNavigationHandler.switchFragment(enrollmentDataEntryFragment, EnrollmentDataEntryFragment.class.getName(), true);
+//    }
 
     public void showDataEntryFragment(Event event, String programStage) {
         Bundle args = getArguments();
@@ -930,7 +956,7 @@ public class ProgramOverviewFragment extends Fragment implements View.OnClickLis
             }
 
             case R.id.newenrollmentbutton: {
-                enroll();
+                createEnrollment();
                 break;
             }
 

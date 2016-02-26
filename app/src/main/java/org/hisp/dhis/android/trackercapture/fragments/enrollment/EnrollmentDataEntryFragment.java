@@ -74,24 +74,30 @@ public class EnrollmentDataEntryFragment extends DataEntryFragment<EnrollmentDat
     private static final String ORG_UNIT_ID = "extra:orgUnitId";
     private static final String PROGRAM_ID = "extra:ProgramId";
     private static final String TRACKEDENTITYINSTANCE_ID = "extra:TrackedEntityInstanceId";
+    private static final String ENROLLMENT_DATE = "extra:enrollmentDate";
+    private static final String INCIDENT_DATE = "extra:incidentDate";
     private EnrollmentDataEntryFragmentForm form;
     private SaveThread saveThread;
 
-    public static EnrollmentDataEntryFragment newInstance(String unitId, String programId) {
+    public static EnrollmentDataEntryFragment newInstance(String unitId, String programId, String enrollmentDate, String incidentDate) {
         EnrollmentDataEntryFragment fragment = new EnrollmentDataEntryFragment();
         Bundle args = new Bundle();
         args.putString(ORG_UNIT_ID, unitId);
         args.putString(PROGRAM_ID, programId);
+        args.putString(ENROLLMENT_DATE, enrollmentDate);
+        args.putString(INCIDENT_DATE, incidentDate);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static EnrollmentDataEntryFragment newInstance(String unitId, String programId, long trackedEntityInstanceId) {
+    public static EnrollmentDataEntryFragment newInstance(String unitId, String programId, long trackedEntityInstanceId, String enrollmentDate, String incidentDate) {
         EnrollmentDataEntryFragment fragment = new EnrollmentDataEntryFragment();
         Bundle args = new Bundle();
         args.putString(ORG_UNIT_ID, unitId);
         args.putString(PROGRAM_ID, programId);
         args.putLong(TRACKEDENTITYINSTANCE_ID, trackedEntityInstanceId);
+        args.putString(ENROLLMENT_DATE, enrollmentDate);
+        args.putString(INCIDENT_DATE, incidentDate);
         fragment.setArguments(args);
         return fragment;
     }
@@ -128,10 +134,12 @@ public class EnrollmentDataEntryFragment extends DataEntryFragment<EnrollmentDat
             String orgUnitId = fragmentArguments.getString(ORG_UNIT_ID);
             String programId = fragmentArguments.getString(PROGRAM_ID);
             long trackedEntityInstance = fragmentArguments.getLong(TRACKEDENTITYINSTANCE_ID, -1);
+            String enrollmentDate = fragmentArguments.getString(ENROLLMENT_DATE);
+            String incidentDate = fragmentArguments.getString(INCIDENT_DATE);
 
             return new DbLoader<>(
                     getActivity().getBaseContext(), modelsToTrack, new EnrollmentDataEntryFragmentQuery(
-                    orgUnitId,programId, trackedEntityInstance )
+                    orgUnitId,programId, trackedEntityInstance, enrollmentDate, incidentDate )
             );
         }
         return null;
