@@ -58,8 +58,8 @@ public class HomeActivity extends DefaultHomeActivity {
             }
         });
         ViewGroup dataItemContainer = (ViewGroup) relationshipCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "Mother of", "Arne Carlsen");
-        drawDataItem(dataItemContainer, "Brother of", "Jan Carlsen");
+        drawDataItem(dataItemContainer, "Mother of", "Arne Carlsen", true);
+        drawDataItem(dataItemContainer, "Brother of", "Jan Carlsen", false);
         contentContainer.addView(relationshipCard);
     }
 
@@ -69,14 +69,17 @@ public class HomeActivity extends DefaultHomeActivity {
         indicatorsCard.findViewById(R.id.fab).setVisibility(View.GONE);
 
         ViewGroup dataItemContainer = (ViewGroup) indicatorsCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "Age", "47");
+        drawDataItem(dataItemContainer, "Age", "47", false);
         contentContainer.addView(indicatorsCard);
     }
 
-    private void drawDataItem(ViewGroup dataItemContainer, String label, String value) {
+    private void drawDataItem(ViewGroup dataItemContainer, String label, String value, boolean showDivider) {
         View dataItemView = LayoutInflater.from(this).inflate(R.layout.dashboard_data_item, dataItemContainer, false);
         ((TextView) dataItemView.findViewById(R.id.label)).setText(label);
         ((TextView) dataItemView.findViewById(R.id.value)).setText(value);
+        if (!showDivider) {
+            dataItemView.findViewById(R.id.divider).setVisibility(View.GONE);
+        }
         dataItemContainer.addView(dataItemView);
     }
 
@@ -138,9 +141,9 @@ public class HomeActivity extends DefaultHomeActivity {
         });
 
         ViewGroup dataItemContainer = (ViewGroup) profileCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "First name", "Magnus");
-        drawDataItem(dataItemContainer, "Last name", "Carlsen");
-        drawDataItem(dataItemContainer, "Date of birth", "1998-01-01");
+        drawDataItem(dataItemContainer, "First name", "Magnus", true);
+        drawDataItem(dataItemContainer, "Last name", "Carlsen", true);
+        drawDataItem(dataItemContainer, "Date of birth", "1998-01-01", false);
         contentContainer.addView(profileCard);
     }
 
