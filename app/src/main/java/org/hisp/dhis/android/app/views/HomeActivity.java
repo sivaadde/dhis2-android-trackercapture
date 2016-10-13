@@ -59,7 +59,7 @@ public class HomeActivity extends DefaultHomeActivity {
         final View programStageCard = LayoutInflater.from(this).inflate(R.layout.dashboard_program_stage, contentContainer, false);
         ((TextView) programStageCard.findViewById(R.id.title)).setText(programStageTitle);
 
-        programStageCard.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+       /* programStageCard.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(), "New " + programStageTitle, Toast.LENGTH_SHORT).show();
@@ -69,7 +69,7 @@ public class HomeActivity extends DefaultHomeActivity {
         ViewGroup eventContainer = (ViewGroup) programStageCard.findViewById(R.id.event_container);
         drawEvent(eventContainer, "Event numero 1", false);
         drawEvent(eventContainer, "Ev dos", true);
-        drawEvent(eventContainer, "Este es el evento mas grande señor, si si", false);
+        drawEvent(eventContainer, "Este es el evento mas grande señor, si si", false);*/
 
         programStageCard.setOnClickListener(new View.OnClickListener() {
             @Override
