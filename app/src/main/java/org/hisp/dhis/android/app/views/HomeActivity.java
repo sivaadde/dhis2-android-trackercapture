@@ -40,37 +40,9 @@ public class HomeActivity extends DefaultHomeActivity {
 
         drawProfileCard(contentContainer);
 
-        drawIndicatorsCard(contentContainer);
-
         drawProgramStage(contentContainer, "Immunization");
         drawProgramStage(contentContainer, "Back Entry");
 
-        drawRelationshipCard(contentContainer);
-    }
-
-    private void drawRelationshipCard(ViewGroup contentContainer) {
-        View relationshipCard = LayoutInflater.from(this).inflate(R.layout.dashboard_data_card, contentContainer, false);
-        ((TextView) relationshipCard.findViewById(R.id.title)).setText("Relationships");
-        relationshipCard.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "New Relationship", Toast.LENGTH_SHORT).show();
-            }
-        });
-        ViewGroup dataItemContainer = (ViewGroup) relationshipCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "Mother of", "Arne Carlsen", true);
-        drawDataItem(dataItemContainer, "Brother of", "Jan Carlsen", false);
-        contentContainer.addView(relationshipCard);
-    }
-
-    private void drawIndicatorsCard(ViewGroup contentContainer) {
-        View indicatorsCard = LayoutInflater.from(this).inflate(R.layout.dashboard_data_card, contentContainer, false);
-        ((TextView) indicatorsCard.findViewById(R.id.title)).setText("Indicators");
-        indicatorsCard.findViewById(R.id.fab).setVisibility(View.GONE);
-
-        ViewGroup dataItemContainer = (ViewGroup) indicatorsCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "Age", "47", false);
-        contentContainer.addView(indicatorsCard);
     }
 
     private void drawDataItem(ViewGroup dataItemContainer, String label, String value, boolean showDivider) {

@@ -96,7 +96,7 @@ public class TrackedEntityInstanceDashboardActivity extends AppCompatActivity im
     }
 
     private void setUpView() {
-        profileRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_tei_dashboard);
+        //profileRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_tei_dashboard);
         rowViewAdapter = new RowViewAdapter(getSupportFragmentManager());
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

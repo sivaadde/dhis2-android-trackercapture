@@ -10,11 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.Base">
         <activity android:name="org.hisp.dhis.client.sdk.ui.bindings.views.DefaultLauncherActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name="org.hisp.dhis.client.sdk.ui.bindings.views.DefaultLoginActivity" />
         <activity android:name=".views.EnrollmentFormActivity" />
@@ -40,7 +36,21 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <activity android:name="org.hisp.dhis.android.app.views.ProgramStageActivity"></activity>
+        <activity android:name=".views.ProgramStageActivity" />
+        <activity
+            android:name=".views.TeiDashboardActivity"
+            android:label="@string/title_activity_tei_dashboard"
+            android:parentActivityName=".views.HomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.hisp.dhis.android.app.views.HomeActivity" />
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
