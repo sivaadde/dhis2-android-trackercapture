@@ -2,6 +2,7 @@ package org.hisp.dhis.android.app.views;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +74,7 @@ public class TeiEventFragment extends TeiFragment {
                     drawEvent(LayoutInflater.from(getContext()), eventContainer, "Event", false);
                     if (isRepeatable) {
                         drawEvent(LayoutInflater.from(getContext()), eventContainer, "Ev dos", true);
-                        drawEvent(LayoutInflater.from(getContext()), eventContainer, "Este es el evento mas grande señor, si si", false);
+                        drawEvent(LayoutInflater.from(getContext()), eventContainer, "Este es el evento mas grande señor, si si", true);
                     }
                 } else {
                     expandCollapseButton.setImageResource(R.drawable.ic_expand);
@@ -126,7 +127,20 @@ public class TeiEventFragment extends TeiFragment {
                 Toast.makeText(getContext(), eventName, Toast.LENGTH_SHORT).show();
             }
         });
+        event.findViewById(R.id.error_text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setPositiveButton("Retry", null).setNegativeButton("Cancel", null).
+                        setIcon(R.drawable.ic_error_black);
+                AlertDialog alertDialog = builder.create();
+
+                alertDialog.setTitle("SYNC ERROR");
+                alertDialog.setMessage("Error syncing item. Error message: 501 Internal Server Error.");
+                alertDialog.show();
+            }
+        });
         eventContainer.addView(event);
     }
 }
