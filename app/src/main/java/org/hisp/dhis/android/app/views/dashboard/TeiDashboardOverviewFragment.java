@@ -1,26 +1,44 @@
-package org.hisp.dhis.android.app.views;
+package org.hisp.dhis.android.app.views.dashboard;
+
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.hisp.dhis.android.app.R;
 
-public class TeiDashboardActivity extends FragmentActivity {
+public class TeiDashboardOverviewFragment extends Fragment {
+
+
+    public TeiDashboardOverviewFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tei_dashboard);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_dashboard_overview, container, false);
+    }
 
-        final ViewPager viewPager = ((ViewPager) findViewById(R.id.view_pager));
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initViewPager(view);
+    }
+
+    private void initViewPager(View view) {
+        final ViewPager viewPager = ((ViewPager) view.findViewById(R.id.view_pager));
         viewPager.setAdapter(new DashboardPageAdapter(
-                getSupportFragmentManager()));
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+                getActivity().getSupportFragmentManager()));
+        TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(
                 (tabLayout)));
 
@@ -40,8 +58,6 @@ public class TeiDashboardActivity extends FragmentActivity {
 
             }
         });
-
-
     }
 
     private class DashboardPageAdapter extends FragmentPagerAdapter {
@@ -70,4 +86,5 @@ public class TeiDashboardActivity extends FragmentActivity {
         }
 
     }
+
 }

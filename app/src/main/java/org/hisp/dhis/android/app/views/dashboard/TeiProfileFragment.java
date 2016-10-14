@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.app.views;
+package org.hisp.dhis.android.app.views.dashboard;
 
 /**
  * Created by thomaslindsjorn on 13/10/16.

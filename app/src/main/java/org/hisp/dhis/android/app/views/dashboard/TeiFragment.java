@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.app.views;
+package org.hisp.dhis.android.app.views.dashboard;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
