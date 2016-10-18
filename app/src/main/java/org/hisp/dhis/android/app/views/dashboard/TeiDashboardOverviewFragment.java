@@ -17,6 +17,8 @@ import org.hisp.dhis.android.app.R;
 public class TeiDashboardOverviewFragment extends Fragment {
 
 
+    private TeiEventFragment.OnFragmentInteractionListener onFragmentInteractionListener;
+
     public TeiDashboardOverviewFragment() {
         // Required empty public constructor
     }
@@ -60,6 +62,10 @@ public class TeiDashboardOverviewFragment extends Fragment {
         });
     }
 
+    public void setOnFragmentInteractionListener(TeiEventFragment.OnFragmentInteractionListener onFragmentInteractionListener) {
+        this.onFragmentInteractionListener = onFragmentInteractionListener;
+    }
+
     private class DashboardPageAdapter extends FragmentPagerAdapter {
 
         public DashboardPageAdapter(FragmentManager fm) {
@@ -70,7 +76,9 @@ public class TeiDashboardOverviewFragment extends Fragment {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new TeiEventFragment();
+                    TeiEventFragment teiEventFragment = new TeiEventFragment();
+                    teiEventFragment.setOnFragmentInteractionListener(onFragmentInteractionListener);
+                    return teiEventFragment;
                 case 1:
                     return new TeiProfileFragment();
                 case 2:
@@ -86,5 +94,4 @@ public class TeiDashboardOverviewFragment extends Fragment {
         }
 
     }
-
 }

@@ -2,6 +2,7 @@ package org.hisp.dhis.android.app.views.dashboard;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,10 +14,15 @@ import android.widget.Toast;
 
 import org.hisp.dhis.android.app.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by thomaslindsjorn on 13/10/16.
  */
 public class TeiEventFragment extends TeiFragment {
+
+    private OnFragmentInteractionListener onFragmentInteractionListener;
 
     @Nullable
     @Override
@@ -28,7 +34,7 @@ public class TeiEventFragment extends TeiFragment {
                 " even use so long names", true, true);
         drawProgramStage(inflater, contentContainer, "This is a repeatable program stage", true, true);
         drawProgramStage(inflater, contentContainer, "This is non-repeatable", true, false);
-        for (int i = 6; i < 30; i++) {
+        for (int i = 6; i < 10; i++) {
             drawProgramStage(inflater, contentContainer, "Program Stage " + i, true, true);
         }
         drawProgramStage(inflater, contentContainer, "Last Program Stage", false, true);
@@ -69,17 +75,36 @@ public class TeiEventFragment extends TeiFragment {
                 if (eventContainer.getVisibility() == View.GONE) {
                     expandCollapseButton.setImageResource(R.drawable.ic_collapse);
                     expandHeader();
-                    name.setMaxLines(3);
                     eventContainer.setVisibility(View.VISIBLE);
-                    drawEvent(LayoutInflater.from(getContext()), eventContainer, "Event", false);
+                    final List<View> events = new ArrayList<>();
+                    events.add(
+                            drawEvent(LayoutInflater.from(getContext()), eventContainer, "Event", false));
                     if (isRepeatable) {
-                        drawEvent(LayoutInflater.from(getContext()), eventContainer, "Ev dos", true);
-                        drawEvent(LayoutInflater.from(getContext()), eventContainer, "Este es el evento mas grande señor, si si", true);
+                        events.add(drawEvent(LayoutInflater.from(getContext()), eventContainer, "Ev dos", true));
+                        events.add(drawEvent(LayoutInflater.from(getContext()), eventContainer, "Este es el evento mas grande señor, si si", true));
                     }
+
+                    for (final View event : events) {
+                        event.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ((TextView) event.findViewById(R.id.event_name)).setTextColor(ContextCompat.getColor(getContext(), R.color.color_primary_default));
+                                Toast.makeText(getContext(), ((TextView) event.findViewById(R.id.event_name)).getText(), Toast.LENGTH_SHORT).show();
+                                if (onFragmentInteractionListener != null) {
+                                    onFragmentInteractionListener.onHideMenu();
+                                }
+                                for (final View event2 : events) {
+                                    if (event2 != event) {
+                                        ((TextView) event.findViewById(R.id.event_name)).setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
+                                    }
+                                }
+                            }
+                        });
+                    }
+
                 } else {
                     expandCollapseButton.setImageResource(R.drawable.ic_expand);
                     collapseHeader();
-                    name.setMaxLines(2);
                     eventContainer.setVisibility(View.GONE);
                     eventContainer.removeAllViews();
                 }
@@ -89,12 +114,14 @@ public class TeiEventFragment extends TeiFragment {
                 ViewGroup.LayoutParams headerParams = headerBar.getLayoutParams();
                 headerParams.height = (int) (headerParams.height / (4.0 / 3.0));
                 headerBar.setLayoutParams(headerParams);
+                name.setMaxLines(2);
             }
 
             private void expandHeader() {
                 ViewGroup.LayoutParams headerParams = headerBar.getLayoutParams();
                 headerParams.height = (int) (headerParams.height * (4.0 / 3.0));
                 headerBar.setLayoutParams(headerParams);
+                name.setMaxLines(3);
             }
         });
 
@@ -114,19 +141,13 @@ public class TeiEventFragment extends TeiFragment {
         return programStageCard;
     }
 
-    private void drawEvent(LayoutInflater inflater, ViewGroup eventContainer, final String eventName, boolean drawRefreshButton) {
+    private View drawEvent(LayoutInflater inflater, ViewGroup eventContainer, final String eventName, boolean drawRefreshButton) {
         View event = inflater.inflate(R.layout.dashboard_event, eventContainer, false);
         ((TextView) event.findViewById(R.id.event_name)).setText(eventName);
         if (drawRefreshButton) {
             event.findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
             event.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
         }
-        event.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), eventName, Toast.LENGTH_SHORT).show();
-            }
-        });
         event.findViewById(R.id.error_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -142,5 +163,15 @@ public class TeiEventFragment extends TeiFragment {
             }
         });
         eventContainer.addView(event);
+        return event;
+    }
+
+    public void setOnFragmentInteractionListener(OnFragmentInteractionListener onFragmentInteractionListener) {
+        this.onFragmentInteractionListener = onFragmentInteractionListener;
+    }
+
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onHideMenu();
     }
 }
