@@ -5,9 +5,19 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 
+import org.hisp.dhis.android.app.ActivityComponent;
 import org.hisp.dhis.android.app.R;
+import org.hisp.dhis.android.app.TrackerCaptureApp;
+import org.hisp.dhis.android.app.views.dashboard.dataentry.DataEntryContainerFragment;
+import org.hisp.dhis.android.app.views.dashboard.navigation.TeiNavigationFragment;
 
-public class TeiDashboardActivity extends FragmentActivity {
+import javax.inject.Inject;
+
+public class TeiDashboardActivity extends FragmentActivity implements TeiDashboardView {
+
+    @Inject
+    TeiDashboardPresenter teiDashboardPresenter;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,27 +29,63 @@ public class TeiDashboardActivity extends FragmentActivity {
                 .replace(R.id.data_entry_pane, new DataEntryContainerFragment())
                 .commit();
 
-        if (getResources().getBoolean(R.bool.use_two_pane_layout)) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.navigation_pane, new TeiDashboardOverviewFragment())
-                    .commit();
-        } else {
-            final DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-            drawerLayout.openDrawer(GravityCompat.END);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.navigation_view, new TeiNavigationFragment())
+                .commit();
 
-            TeiDashboardOverviewFragment menuFragment = new TeiDashboardOverviewFragment();
-            menuFragment.setOnFragmentInteractionListener(new TeiEventFragment.OnFragmentInteractionListener() {
-                @Override
-                public void onHideMenu() {
-                    drawerLayout.closeDrawers();
-                }
-            });
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.drawer_content, menuFragment)
-                    .commit();
+        // if using two-pane layout (tablets in landscape mode), drawerLayout will be null
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        ActivityComponent activityComponent = ((TrackerCaptureApp) getApplication()).getActivityComponent();
+
+        // first time activity is created
+        if (savedInstanceState == null) {
+            // it means we found old component and we have to release it
+            if (activityComponent != null) {
+                // create new instance of component
+                ((TrackerCaptureApp) getApplication()).releaseFormComponent();
+            }
+
+            activityComponent = ((TrackerCaptureApp) getApplication()).createActivityComponent();
+        } else {
+            activityComponent = ((TrackerCaptureApp) getApplication()).getActivityComponent();
         }
 
+
+        // inject dependencies
+        activityComponent.inject(this);
+
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        teiDashboardPresenter.attachView(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        teiDashboardPresenter.detachView();
+    }
+
+    private boolean useTwoPaneLayout() {
+        return getResources().getBoolean(R.bool.use_two_pane_layout);
+    }
+
+    @Override
+    public void closeDrawer() {
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawers();
+        }
+    }
+
+    @Override
+    public void openDrawer() {
+        if (drawerLayout != null) {
+            drawerLayout.openDrawer(GravityCompat.END);
+        }
+    }
+
 }

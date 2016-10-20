@@ -83,6 +83,8 @@
 
             </android.support.design.widget.CollapsingToolbarLayout>
 
+            <!--<include layout="@layout/navigation_header" />-->
+
             <android.support.design.widget.TabLayout
                 android:id="@+id/tab_layout"
                 android:layout_width="match_parent"

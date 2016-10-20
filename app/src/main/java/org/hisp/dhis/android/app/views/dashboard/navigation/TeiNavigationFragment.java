@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.app.views.dashboard;
+package org.hisp.dhis.android.app.views.dashboard.navigation;
 
 
 import android.os.Bundle;
@@ -13,13 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.hisp.dhis.android.app.R;
+import org.hisp.dhis.android.app.views.dashboard.TeiDashboardPresenter;
+import org.hisp.dhis.android.app.views.dashboard.navigation.event.TeiProgramStageFragment;
+import org.hisp.dhis.android.app.views.dashboard.navigation.profile.TeiProfileFragment;
+import org.hisp.dhis.android.app.views.dashboard.navigation.widget.TeiWidgetFragment;
 
-public class TeiDashboardOverviewFragment extends Fragment {
+import javax.inject.Inject;
 
+public class TeiNavigationFragment extends Fragment implements TeiNavigationView {
 
-    private TeiEventFragment.OnFragmentInteractionListener onFragmentInteractionListener;
+    @Inject
+    TeiDashboardPresenter teiDashboardPresenter;
 
-    public TeiDashboardOverviewFragment() {
+    public TeiNavigationFragment() {
         // Required empty public constructor
     }
 
@@ -40,7 +46,10 @@ public class TeiDashboardOverviewFragment extends Fragment {
         final ViewPager viewPager = ((ViewPager) view.findViewById(R.id.view_pager));
         viewPager.setAdapter(new DashboardPageAdapter(
                 getActivity().getSupportFragmentManager()));
+
+
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
+
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(
                 (tabLayout)));
 
@@ -62,10 +71,6 @@ public class TeiDashboardOverviewFragment extends Fragment {
         });
     }
 
-    public void setOnFragmentInteractionListener(TeiEventFragment.OnFragmentInteractionListener onFragmentInteractionListener) {
-        this.onFragmentInteractionListener = onFragmentInteractionListener;
-    }
-
     private class DashboardPageAdapter extends FragmentPagerAdapter {
 
         public DashboardPageAdapter(FragmentManager fm) {
@@ -75,16 +80,13 @@ public class TeiDashboardOverviewFragment extends Fragment {
         @Override
         public Fragment getItem(int position) {
             switch (position) {
+                default:
                 case 0:
-                    TeiEventFragment teiEventFragment = new TeiEventFragment();
-                    teiEventFragment.setOnFragmentInteractionListener(onFragmentInteractionListener);
-                    return teiEventFragment;
+                    return new TeiProgramStageFragment();
                 case 1:
                     return new TeiProfileFragment();
                 case 2:
                     return new TeiWidgetFragment();
-                default:
-                    return new TeiEventFragment();
             }
         }
 

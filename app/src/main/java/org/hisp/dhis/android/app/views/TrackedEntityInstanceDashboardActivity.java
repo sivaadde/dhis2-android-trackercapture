@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import org.hisp.dhis.android.app.ActivityComponent;
 import org.hisp.dhis.android.app.R;
 import org.hisp.dhis.android.app.TrackerCaptureApp;
-import org.hisp.dhis.android.app.presenters.TrackedEntityInstanceDashboardPresenter;
+import org.hisp.dhis.android.app.views.dashboard.TeiDashboardPresenter;
 import org.hisp.dhis.client.sdk.ui.models.FormEntity;
 import org.hisp.dhis.client.sdk.ui.rows.RowViewAdapter;
 import org.hisp.dhis.client.sdk.ui.views.DividerDecoration;
@@ -28,7 +28,7 @@ public class TrackedEntityInstanceDashboardActivity extends AppCompatActivity im
     private static final String ARG_ENROLLMENT_UID = "arg:EnrollmentUid";
 
     @Inject
-    TrackedEntityInstanceDashboardPresenter trackedEntityInstanceDashboardPresenter;
+    TeiDashboardPresenter teiDashboardPresenter;
 
     RecyclerView profileRecyclerView;
     RowViewAdapter rowViewAdapter;
@@ -79,19 +79,19 @@ public class TrackedEntityInstanceDashboardActivity extends AppCompatActivity im
         // inject dependencies
         activityComponent.inject(this);
 
-        trackedEntityInstanceDashboardPresenter.createDashboard(getEnrollmentUid());
+        //teiDashboardPresenter.drawNavigationLayout();
 
     }
 
     @Override
     protected void onStart() {
-        trackedEntityInstanceDashboardPresenter.attachView(this);
+        teiDashboardPresenter.attachView(this);
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        trackedEntityInstanceDashboardPresenter.detachView();
+        teiDashboardPresenter.detachView();
         super.onStop();
     }
 

@@ -1,6 +1,5 @@
 package org.hisp.dhis.android.app.views;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
@@ -40,8 +39,8 @@ public class HomeActivity extends DefaultHomeActivity {
 
         drawProfileCard(contentContainer);
 
-        drawProgramStage(contentContainer, "Immunization");
-        drawProgramStage(contentContainer, "Back Entry");
+        //drawProgramStage(contentContainer, "Immunization");
+        //drawProgramStage(contentContainer, "Back Entry");
 
     }
 
@@ -53,33 +52,6 @@ public class HomeActivity extends DefaultHomeActivity {
             dataItemView.findViewById(R.id.divider).setVisibility(View.GONE);
         }
         dataItemContainer.addView(dataItemView);
-    }
-
-    private void drawProgramStage(ViewGroup contentContainer, final String programStageTitle) {
-        final View programStageCard = LayoutInflater.from(this).inflate(R.layout.dashboard_program_stage, contentContainer, false);
-        ((TextView) programStageCard.findViewById(R.id.title)).setText(programStageTitle);
-
-       /* programStageCard.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "New " + programStageTitle, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        ViewGroup eventContainer = (ViewGroup) programStageCard.findViewById(R.id.event_container);
-        drawEvent(eventContainer, "Event numero 1", false);
-        drawEvent(eventContainer, "Ev dos", true);
-        drawEvent(eventContainer, "Este es el evento mas grande señor, si si", false);*/
-
-        programStageCard.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(HomeActivity.this, ProgramStageActivity.class);
-                startActivity(i);
-            }
-        });
-
-        contentContainer.addView(programStageCard);
     }
 
     private void drawEvent(ViewGroup eventContainer, final String eventName, boolean drawRefreshButton) {

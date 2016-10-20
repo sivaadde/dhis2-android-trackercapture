@@ -1,4 +1,4 @@
-package org.hisp.dhis.android.app.views.dashboard;
+package org.hisp.dhis.android.app.views.dashboard.dataentry;
 
 
 import android.os.Bundle;
@@ -8,12 +8,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.hisp.dhis.android.app.R;
+import org.hisp.dhis.android.app.views.dashboard.TeiDashboardPresenter;
+
+import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DataEntryContainerFragment extends Fragment {
 
+    @Inject
+    TeiDashboardPresenter teiDashboardPresenter;
 
     public DataEntryContainerFragment() {
         // Required empty public constructor
