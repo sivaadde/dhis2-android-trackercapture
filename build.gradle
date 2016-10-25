@@ -3,17 +3,17 @@ ext {
             package          : "org.hisp.dhis.android.trackercapture",
             buildToolsVersion: "23.0.2",
             minSdkVersion    : 15,
-            compileSdkVersion: 23,
-            targetSdkVersion : 23,
+            compileSdkVersion: 24,
+            targetSdkVersion : 24,
             versionCode      : 21,
             versionName      : "0.0.1"
     ]
     libraries = [
             // dhis libs
-            dhisCommonsVersion : "1.1",
+            dhisCommonsVersion      : "1.1",
 
             // android libs
-            supportVersion          : "23.4.0",
+            supportVersion          : "24.2.1",
             rxAndroidVersion        : "1.1.0",
             dbFlowVersion           : "3.0.1",
             progressBarVersion      : "1.2.0",
