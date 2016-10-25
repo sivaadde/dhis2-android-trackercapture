@@ -3,20 +3,10 @@ package org.hisp.dhis.android.app.views;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import org.hisp.dhis.android.app.R;
 import org.hisp.dhis.client.sdk.ui.bindings.views.DefaultHomeActivity;
-import org.hisp.dhis.client.sdk.ui.fragments.EventListFragment;
 import org.hisp.dhis.client.sdk.ui.fragments.WrapperFragment;
 
 public class HomeActivity extends DefaultHomeActivity {
@@ -28,75 +18,13 @@ public class HomeActivity extends DefaultHomeActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        addMenuItem(DRAWER_ITEM_PLACEHOLDER_ID, R.drawable.ic_add,
-                R.string.drawer_item_placeholder);
+        addMenuItem(DRAWER_ITEM_PLACEHOLDER_ID, R.drawable.ic_add, R.string.drawer_item_placeholder);
         if (savedInstanceState == null) {
-            onNavigationItemSelected(getNavigationView().getMenu()
-                    .findItem(DRAWER_ITEM_PLACEHOLDER_ID));
+            onNavigationItemSelected(getNavigationView().getMenu().findItem(DRAWER_ITEM_PLACEHOLDER_ID));
         }
 
-        ViewGroup contentContainer = ((ViewGroup) findViewById(R.id.content_container));
-
-        drawProfileCard(contentContainer);
-
-        //drawProgramStage(contentContainer, "Immunization");
-        //drawProgramStage(contentContainer, "Back Entry");
-
     }
 
-    private void drawDataItem(ViewGroup dataItemContainer, String label, String value, boolean showDivider) {
-        View dataItemView = LayoutInflater.from(this).inflate(R.layout.dashboard_data_item, dataItemContainer, false);
-        ((TextView) dataItemView.findViewById(R.id.label)).setText(label);
-        ((TextView) dataItemView.findViewById(R.id.value)).setText(value);
-        if (!showDivider) {
-            dataItemView.findViewById(R.id.divider).setVisibility(View.GONE);
-        }
-        dataItemContainer.addView(dataItemView);
-    }
-
-    private void drawEvent(ViewGroup eventContainer, final String eventName, boolean drawRefreshButton) {
-        View event = LayoutInflater.from(this).inflate(R.layout.dashboard_event, eventContainer, false);
-        ((TextView) event.findViewById(R.id.event_name)).setText(eventName);
-        if (drawRefreshButton) {
-            event.findViewById(R.id.refresh_button).setVisibility(View.VISIBLE);
-            event.findViewById(R.id.error_text).setVisibility(View.VISIBLE);
-        }
-        event.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(HomeActivity.this, eventName, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        eventContainer.addView(event);
-    }
-
-    private void drawProfileCard(ViewGroup contentContainer) {
-        View profileCard = LayoutInflater.from(this).inflate(R.layout.dashboard_data_card, contentContainer, false);
-
-        ((TextView) profileCard.findViewById(R.id.title)).setText("Profile");
-        FloatingActionButton editButton = (FloatingActionButton) profileCard.findViewById(R.id.fab);
-        editButton.setImageResource(R.drawable.ic_edit);
-        editButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Edit Profile", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        ViewGroup dataItemContainer = (ViewGroup) profileCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "First name", "Magnus", true);
-        drawDataItem(dataItemContainer, "Last name", "Carlsen", true);
-        drawDataItem(dataItemContainer, "Date of birth", "1998-01-01", false);
-        contentContainer.addView(profileCard);
-    }
-
-    private void addDataItem(ViewGroup dataItemContainer, String label, String value) {
-        View dataItemView = LayoutInflater.from(this).inflate(R.layout.dashboard_data_item, dataItemContainer, false);
-        ((TextView) dataItemView.findViewById(R.id.label)).setText(label);
-        ((TextView) dataItemView.findViewById(R.id.value)).setText(value);
-        dataItemContainer.addView(dataItemView);
-    }
 
     @Override
     protected boolean onItemSelected(@NonNull MenuItem item) {
@@ -108,39 +36,6 @@ public class HomeActivity extends DefaultHomeActivity {
             }
         }
         return true;
-    }
-
-    private class ProgramStageEventAdapter extends FragmentPagerAdapter {
-        public ProgramStageEventAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment fragment = new EventListFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("FILTER", getPageTitle(position).toString());
-            fragment.setArguments(bundle);
-            return fragment;
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SCHEDULED";
-                case 1:
-                    return "ACTIVE";
-                case 2:
-                    return "COMPLETED";
-            }
-            return "";
-        }
     }
 }
 
