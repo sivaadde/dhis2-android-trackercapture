@@ -2,10 +2,11 @@ package org.hisp.dhis.android.app.views.dashboard.navigation.event;
 
 import org.hisp.dhis.android.app.views.dashboard.TeiDashboardPresenter;
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
-import org.hisp.dhis.client.sdk.ui.models.FormEntity;
-import org.hisp.dhis.client.sdk.ui.models.FormExpansionPanel;
+import org.hisp.dhis.client.sdk.ui.models.ExpansionPanel;
+import org.hisp.dhis.client.sdk.ui.models.ReportEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
@@ -38,20 +39,33 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
         teiProgramStageView = null;
     }
 
-    List<FormEntity> getDummyProgramStages() {
-        List<FormEntity> formEntities = new ArrayList<>();
-        formEntities.add(new FormExpansionPanel("123", "Immunization"));
-        formEntities.add(new FormExpansionPanel("124", "Very long program stage name bro, too long for one line do people"));
-        /*
-        drawProgramStage(inflater, contentContainer, "Immunization", true, true);
-        drawProgramStage(inflater, contentContainer, "Very long program stage name bro, too long for one line do people" +
-                " even use so long names", true, true);
-        drawProgramStage(inflater, contentContainer, "This is a repeatable program stage", true, true);
-        drawProgramStage(inflater, contentContainer, "This is non-repeatable", true, false);
-        for (int i = 6; i < 10; i++) {
-            drawProgramStage(inflater, contentContainer, "Program Stage " + i, true, true);
-        }
-        drawProgramStage(inflater, contentContainer, "Last Program Stage", false, true);*/
-        return formEntities;
+    List<ExpansionPanel> getDummyProgramStages() {
+        List<ExpansionPanel> expansionPanels = new ArrayList<>();
+
+        List<ReportEntity> events = new ArrayList<>();
+        ReportEntity firstEvent = new ReportEntity("123", ReportEntity.Status.SENT, new HashMap<String, String>());
+        events.add(firstEvent);
+        ReportEntity secondEvent = new ReportEntity("123", ReportEntity.Status.SENT, new HashMap<String, String>());
+        events.add(secondEvent);
+        ReportEntity thirdEvent = new ReportEntity("123", ReportEntity.Status.SENT, new HashMap<String, String>());
+        events.add(thirdEvent);
+
+        ExpansionPanel expansionPanel1 = new ExpansionPanel("123", "Immunization", ExpansionPanel.Type.ACTION_ADD);
+        expansionPanel1.setChildren(events);
+        expansionPanels.add(expansionPanel1);
+
+        ExpansionPanel expansionPanel2 = new ExpansionPanel("124", "Very long program stage name bro, too long for one line do people even use so long names?", ExpansionPanel.Type.ACTION_ADD);
+        expansionPanel2.setChildren(events);
+        expansionPanels.add(expansionPanel2);
+
+        ExpansionPanel expansionPanel3 = new ExpansionPanel("125", "WAT", ExpansionPanel.Type.ACTION_ADD);
+        expansionPanel3.setChildren(events);
+        expansionPanels.add(expansionPanel3);
+
+        ExpansionPanel expansionPanel4 = new ExpansionPanel("125", "NON-Repeatable", ExpansionPanel.Type.ACTION_EDIT);
+        expansionPanel4.setChildren(events.subList(0, 1));
+        expansionPanels.add(expansionPanel4);
+
+        return expansionPanels;
     }
 }

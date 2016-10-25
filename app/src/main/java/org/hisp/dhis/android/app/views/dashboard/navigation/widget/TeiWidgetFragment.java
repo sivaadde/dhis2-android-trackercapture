@@ -2,18 +2,22 @@ package org.hisp.dhis.android.app.views.dashboard.navigation.widget;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 
 import org.hisp.dhis.android.app.R;
 import org.hisp.dhis.android.app.TrackerCaptureApp;
 import org.hisp.dhis.android.app.views.dashboard.navigation.AbsTeiNavigationSectionFragment;
-import org.hisp.dhis.client.sdk.ui.models.FormEntity;
+import org.hisp.dhis.client.sdk.ui.adapters.expandable.ExpandableAdapter;
+import org.hisp.dhis.client.sdk.ui.models.ExpansionPanel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -25,14 +29,13 @@ public class TeiWidgetFragment extends AbsTeiNavigationSectionFragment implement
 
     @Inject
     TeiWidgetPresenter teiWidgetPresenter;
+    ExpandableAdapter adapter;
+    private ArrayList<ExpansionPanel> widgets;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        /*ViewGroup contentContainer = (ViewGroup) rootView.findViewById(R.id.content_container);
-        drawIndicatorsCard(inflater, contentContainer);
-        drawRelationshipCard(inflater, contentContainer);*/
+        initViews(inflater, container);
 
         try {
             ((TrackerCaptureApp) getActivity().getApplication())
@@ -43,7 +46,17 @@ public class TeiWidgetFragment extends AbsTeiNavigationSectionFragment implement
 
         teiWidgetPresenter.attachView(this);
 
-        return rootView;
+        return recyclerView;
+    }
+
+    private void initViews(LayoutInflater inflater, @Nullable ViewGroup container) {
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_tei_navigation, container, false);
+        widgets = new ArrayList<>();
+        adapter = new ExpandableAdapter(widgets);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -58,33 +71,14 @@ public class TeiWidgetFragment extends AbsTeiNavigationSectionFragment implement
         teiWidgetPresenter.detachView();
     }
 
-    private void drawRelationshipCard(LayoutInflater inflater, ViewGroup contentContainer) {
-        View relationshipCard = inflater.inflate(R.layout.dashboard_data_card, contentContainer, false);
-        ((TextView) relationshipCard.findViewById(R.id.title)).setText("Relationships");
-        relationshipCard.findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getContext(), "New Relationship", Toast.LENGTH_SHORT).show();
-            }
-        });
-        ViewGroup dataItemContainer = (ViewGroup) relationshipCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "Mother of", "Arne Carlsen", true);
-        drawDataItem(dataItemContainer, "Brother of", "Jan Carlsen", false);
-        contentContainer.addView(relationshipCard);
-    }
-
-    private void drawIndicatorsCard(LayoutInflater inflater, ViewGroup contentContainer) {
-        View indicatorsCard = inflater.inflate(R.layout.dashboard_data_card, contentContainer, false);
-        ((TextView) indicatorsCard.findViewById(R.id.title)).setText("Indicators");
-        indicatorsCard.findViewById(R.id.fab).setVisibility(View.GONE);
-
-        ViewGroup dataItemContainer = (ViewGroup) indicatorsCard.findViewById(R.id.data_item_container);
-        drawDataItem(dataItemContainer, "Age", "47", false);
-        contentContainer.addView(indicatorsCard);
+    @Override
+    public void drawWidgets(List<ExpansionPanel> widgets) {
+        adapter.swap(widgets);
+        adapter.expandAllParents();
     }
 
     @Override
-    public void drawWidgets(List<FormEntity> widgets) {
-        Log.d("WidgetFragment", "Draw widgets");
+    protected ExpandableRecyclerAdapter getAdapter() {
+        return adapter;
     }
 }

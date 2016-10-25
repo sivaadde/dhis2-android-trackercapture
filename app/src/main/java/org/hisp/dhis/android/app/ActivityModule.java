@@ -71,8 +71,8 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
-    public TeiProfilePresenter providesTeiProfilePresenter() {
-        return new TeiProfilePresenterImpl();
+    public TeiProfilePresenter providesTeiProfilePresenter(@Nullable EnrollmentInteractor enrollmentInteractor) {
+        return new TeiProfilePresenterImpl(enrollmentInteractor);
     }
 
     @Provides

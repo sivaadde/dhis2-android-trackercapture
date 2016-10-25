@@ -2,37 +2,47 @@ package org.hisp.dhis.android.app.views.dashboard.navigation.event;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
+
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 
 import org.hisp.dhis.android.app.R;
 import org.hisp.dhis.android.app.TrackerCaptureApp;
 import org.hisp.dhis.android.app.views.dashboard.navigation.AbsTeiNavigationSectionFragment;
+import org.hisp.dhis.client.sdk.ui.adapters.expandable.ExpandableAdapter;
+import org.hisp.dhis.client.sdk.ui.models.ExpansionPanel;
 import org.hisp.dhis.client.sdk.ui.models.FormEntity;
-import org.hisp.dhis.client.sdk.ui.models.FormExpansionPanel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
-/**
- * Created by thomaslindsjorn on 13/10/16.
- */
 public class TeiProgramStageFragment extends AbsTeiNavigationSectionFragment implements TeiProgramStageView {
 
     @Inject
     TeiProgramStagePresenter teiProgramStagePresenter;
+    private ExpandableAdapter adapter;
+    private ArrayList<ExpansionPanel> programStages;
+
+    public static TeiProgramStageFragment newInstance(String enrollmentUid) {
+        Bundle bundle = new Bundle();
+        bundle.putString(ARG_ENROLLMENT_UID, enrollmentUid);
+
+        TeiProgramStageFragment teiProgramStageFragment = new TeiProgramStageFragment();
+        teiProgramStageFragment.setArguments(bundle);
+        return teiProgramStageFragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) super.onCreateView(inflater, container, savedInstanceState);
-        //drawDummyData(inflater, rootView);
+        initViews(inflater, container);
 
         try {
             ((TrackerCaptureApp) getActivity().getApplication())
@@ -42,14 +52,23 @@ public class TeiProgramStageFragment extends AbsTeiNavigationSectionFragment imp
         }
 
         teiProgramStagePresenter.attachView(this);
+        return recyclerView;
+    }
 
-        return rootView;
+    private void initViews(LayoutInflater inflater, @Nullable ViewGroup container) {
+        recyclerView = (RecyclerView) inflater.inflate(R.layout.fragment_tei_navigation, container, false);
+        programStages = new ArrayList<>();
+        adapter = new ExpandableAdapter(programStages);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        teiProgramStagePresenter.drawProgramStages("Enrollment uid");
+        teiProgramStagePresenter.drawProgramStages(getEnrollmentUid());
     }
 
     @Override
@@ -59,12 +78,8 @@ public class TeiProgramStageFragment extends AbsTeiNavigationSectionFragment imp
     }
 
     @Override
-    public void drawProgramStages(List<FormEntity> programStages) {
-        ViewGroup contentContainer = (ViewGroup) getView().findViewById(R.id.content_container);
-        contentContainer.removeAllViews();
-        for (FormEntity programStage : programStages) {
-            contentContainer.addView(getViewForProgramStage(programStage, contentContainer));
-        }
+    public void drawProgramStages(final List<ExpansionPanel> programStages) {
+        adapter.swap(programStages);
     }
 
     @Override
@@ -72,52 +87,8 @@ public class TeiProgramStageFragment extends AbsTeiNavigationSectionFragment imp
         teiProgramStagePresenter.onEventClicked(event.getId());
     }
 
-    private View getViewForProgramStage(FormEntity programStage, ViewGroup container) {
-        final View itemView = LayoutInflater.from(getContext()).inflate(
-                R.layout.recyclerview_row_expansion_panel, container, false);
-
-        final TextView textViewLabel = ((TextView) itemView
-                .findViewById(R.id.title));
-        textViewLabel.setText(programStage.getLabel());
-        itemView.findViewById(R.id.action_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(v.getContext(), ((TextView) itemView
-                        .findViewById(R.id.title)).getText(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        final ImageButton expandCollapseButton = (ImageButton) itemView.findViewById(R.id.expand_collapse_button);
-        View.OnClickListener expandCollapseClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isExpanded()) {
-                    collapse(v);
-                } else {
-                    expand(v);
-                    onEventClicked(new FormExpansionPanel(textViewLabel.getText().toString(), "label"));
-                }
-            }
-
-            private void expand(View v) {
-                expandCollapseButton.setTag(true);
-                expandCollapseButton.setImageResource(org.hisp.dhis.client.sdk.ui.R.drawable.ic_expand);
-                Toast.makeText(v.getContext(), "Collapse " + textViewLabel.getText(), Toast.LENGTH_SHORT).show();
-            }
-
-            private void collapse(View v) {
-                expandCollapseButton.setTag(false);
-                expandCollapseButton.setImageResource(org.hisp.dhis.client.sdk.ui.R.drawable.ic_collapse);
-                Toast.makeText(v.getContext(), "Expand " + textViewLabel.getText(), Toast.LENGTH_SHORT).show();
-            }
-
-            private boolean isExpanded() {
-                return expandCollapseButton.getTag() != null && expandCollapseButton.getTag() instanceof Boolean && (Boolean) expandCollapseButton.getTag();
-            }
-        };
-
-        expandCollapseButton.setOnClickListener(expandCollapseClickListener);
-        itemView.setOnClickListener(expandCollapseClickListener);
-
-        return itemView;
+    @Override
+    protected ExpandableRecyclerAdapter getAdapter() {
+        return adapter;
     }
 }

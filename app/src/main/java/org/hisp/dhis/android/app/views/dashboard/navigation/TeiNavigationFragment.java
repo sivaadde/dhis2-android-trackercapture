@@ -47,7 +47,7 @@ public class TeiNavigationFragment extends Fragment implements TeiNavigationView
         viewPager.setAdapter(new DashboardPageAdapter(
                 getActivity().getSupportFragmentManager()));
 
-
+        viewPager.setOffscreenPageLimit(2);
         TabLayout tabLayout = (TabLayout) view.findViewById(R.id.tab_layout);
 
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(
@@ -82,7 +82,7 @@ public class TeiNavigationFragment extends Fragment implements TeiNavigationView
             switch (position) {
                 default:
                 case 0:
-                    return new TeiProgramStageFragment();
+                    return TeiProgramStageFragment.newInstance("Enrollment uid");
                 case 1:
                     return new TeiProfileFragment();
                 case 2:

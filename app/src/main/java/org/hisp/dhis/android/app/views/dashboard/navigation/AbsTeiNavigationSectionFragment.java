@@ -2,33 +2,46 @@ package org.hisp.dhis.android.app.views.dashboard.navigation;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import android.support.v7.widget.RecyclerView;
 
-import org.hisp.dhis.android.app.R;
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
+
+import org.hisp.dhis.client.sdk.ui.fragments.BaseFragment;
 
 /**
  * Parent fragment for fragments within the dashboard navigation layout
  */
 
-public abstract class AbsTeiNavigationSectionFragment extends android.support.v4.app.Fragment {
+public abstract class AbsTeiNavigationSectionFragment extends BaseFragment {
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_tei_navigation, container, false);
-        return rootView;
-    }
 
-    protected void drawDataItem(ViewGroup dataItemContainer, String label, String value, boolean showDivider) {
-        View dataItemView = LayoutInflater.from(getContext()).inflate(R.layout.dashboard_data_item, dataItemContainer, false);
-        ((TextView) dataItemView.findViewById(R.id.label)).setText(label);
-        ((TextView) dataItemView.findViewById(R.id.value)).setText(value);
-        if (!showDivider) {
-            dataItemView.findViewById(R.id.divider).setVisibility(View.GONE);
+    protected static final String ARG_ENROLLMENT_UID = "arg:EnrollmentUid";
+    protected RecyclerView recyclerView;
+
+    protected String getEnrollmentUid() {
+        if (getArguments().getString(ARG_ENROLLMENT_UID) == null) {
+            throw new IllegalArgumentException("You must pass enrollment uid in intent extras");
         }
-        dataItemContainer.addView(dataItemView);
+
+        return getArguments().getString(ARG_ENROLLMENT_UID);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        if (getAdapter() instanceof ExpandableRecyclerAdapter) {
+            ((ExpandableRecyclerAdapter) getAdapter()).onSaveInstanceState(savedInstanceState);
+        }
+    }
+
+    protected abstract RecyclerView.Adapter getAdapter();
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (getAdapter() instanceof ExpandableRecyclerAdapter) {
+            ((ExpandableRecyclerAdapter) getAdapter()).onRestoreInstanceState(savedInstanceState);
+        }
+    }
+
 }
