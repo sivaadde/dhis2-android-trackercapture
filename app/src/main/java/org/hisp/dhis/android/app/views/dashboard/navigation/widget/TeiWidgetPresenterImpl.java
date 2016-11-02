@@ -2,7 +2,6 @@ package org.hisp.dhis.android.app.views.dashboard.navigation.widget;
 
 import org.hisp.dhis.client.sdk.ui.bindings.views.View;
 import org.hisp.dhis.client.sdk.ui.models.ExpansionPanel;
-import org.hisp.dhis.client.sdk.ui.models.ReportEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +27,7 @@ public class TeiWidgetPresenterImpl implements TeiWidgetPresenter {
 
     private List<ExpansionPanel> generateDummyData() {
         ArrayList<ExpansionPanel> widgets = new ArrayList<ExpansionPanel>();
-
+        /* This test data crashes the app atm:
         ExpansionPanel indicatorsWidget = new ExpansionPanel("123", "Indicators", ExpansionPanel.Type.ACTION_NONE);
         ArrayList<ReportEntity> indicators = new ArrayList<ReportEntity>();
         indicators.add(new ReportEntity("123", ReportEntity.Status.SENT, null));
@@ -43,7 +42,7 @@ public class TeiWidgetPresenterImpl implements TeiWidgetPresenter {
         relationships.add(new ReportEntity("124", ReportEntity.Status.SENT, null));
         relationships.add(new ReportEntity("125", ReportEntity.Status.SENT, null));
         relationshipWidget.setChildren(relationships);
-        widgets.add(relationshipWidget);
+        widgets.add(relationshipWidget);*/
 
         return widgets;
     }

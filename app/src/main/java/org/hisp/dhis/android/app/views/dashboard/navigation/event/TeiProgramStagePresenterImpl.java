@@ -86,7 +86,12 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
             e.setUId("e" + i);
             e.setStatus(Event.EventStatus.values()[new Random().nextInt(Event.EventStatus.values().length - 1)]);
             e.setProgramStage("p" + new Random().nextInt(4));
-            e.setEventDate(DateTime.now().minusDays(new Random().nextInt(666)));
+            e.setEventDate(
+                    DateTime.now()
+                            .minusDays(new Random().nextInt(666))
+                            .minusMonths(new Random().nextInt(66))
+                            .minusYears(new Random().nextInt(66))
+            );
             events.add(e);
         }
         expansionPanels = programStagesToExpansionPanel(programStages, events);
@@ -164,9 +169,11 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
                                 "Unsupported event state: " + state.getAction());
                     }
                 }
-                Map<String, String> dataElementToValueMap = mapDataElementToValue(event.getDataValues());
+                //Map<String, String> dataElementToValueMap = mapDataElementToValue(event.getDataValues());
+                Map<String, String> dataElementToValueMap = new HashMap<>();
                 dataElementToValueMap.put(Event.EVENT_DATE_KEY, event.getEventDate().toString(DateTimeFormat.forPattern(DATE_FORMAT)));
                 dataElementToValueMap.put(Event.STATUS_KEY, event.getStatus().toString());
+                //dataElementToValueMap.put("OrgUnit", event.getOrgUnit());
                 reportEntities.add(new ReportEntity(event.getUId(), status, dataElementToValueMap));
             }
         }
