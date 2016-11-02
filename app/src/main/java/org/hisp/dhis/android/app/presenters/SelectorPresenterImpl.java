@@ -13,7 +13,6 @@ import org.hisp.dhis.client.sdk.android.trackedentity.TrackedEntityInstanceInter
 import org.hisp.dhis.client.sdk.core.common.network.ApiException;
 import org.hisp.dhis.client.sdk.core.common.utils.ModelUtils;
 import org.hisp.dhis.client.sdk.models.common.state.State;
-import org.hisp.dhis.client.sdk.models.dataelement.DataElement;
 import org.hisp.dhis.client.sdk.models.enrollment.Enrollment;
 import org.hisp.dhis.client.sdk.models.event.Event;
 import org.hisp.dhis.client.sdk.models.organisationunit.OrganisationUnit;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import rx.Observable;
@@ -427,8 +425,8 @@ public class SelectorPresenterImpl implements SelectorPresenter {
         List<ReportEntity> reportEntities = new ArrayList<>();
 
         for (Event event : events) {
-            // status of event
-            ReportEntity.Status status;
+            // syncStatus of event
+            ReportEntity.SyncStatus syncStatus;
             // get state of event from database
             State state = stateMap.get(event.getId());
             // State state = eventInteractor.get(event).toBlocking().first();
@@ -436,19 +434,19 @@ public class SelectorPresenterImpl implements SelectorPresenter {
             logger.d(TAG, "State action for event " + event + " is " + state.getAction());
             switch (state.getAction()) {
                 case SYNCED: {
-                    status = ReportEntity.Status.SENT;
+                    syncStatus = ReportEntity.SyncStatus.SENT;
                     break;
                 }
                 case TO_POST: {
-                    status = ReportEntity.Status.TO_POST;
+                    syncStatus = ReportEntity.SyncStatus.TO_POST;
                     break;
                 }
                 case TO_UPDATE: {
-                    status = ReportEntity.Status.TO_UPDATE;
+                    syncStatus = ReportEntity.SyncStatus.TO_UPDATE;
                     break;
                 }
                 case ERROR: {
-                    status = ReportEntity.Status.ERROR;
+                    syncStatus = ReportEntity.SyncStatus.ERROR;
                     break;
                 }
                 default: {
@@ -464,12 +462,13 @@ public class SelectorPresenterImpl implements SelectorPresenter {
 
             dataElementToValueMap.put(Event.EVENT_DATE_KEY,
                     event.getEventDate().toString(DateTimeFormat.forPattern(DATE_FORMAT)));
-            dataElementToValueMap.put(Event.STATUS_KEY, event.getStatus().toString());
+            dataElementToValueMap.put(Event.EVENT_STATUS, event.getStatus().toString());
+            dataElementToValueMap.put(Event.ORG_UNIT, event.getOrgUnit().toString());
 
             reportEntities.add(
                     new ReportEntity(
                             event.getUId(),
-                            status,
+                            syncStatus,
                             dataElementToValueMap));
 
         }

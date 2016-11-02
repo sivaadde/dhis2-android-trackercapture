@@ -69,23 +69,13 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
             p.setRepeatable(true);
             //}
         }
-        // Make test Events:
-        for (int i = 0; i < 30 + new Random().nextInt(150); i++) {
-            Event e = new Event();
-            e.setDisplayName("Event " + i);
-            e.setUId("e" + i);
-            e.setStatus(Event.EventStatus.values()[new Random().nextInt(Event.EventStatus.values().length - 1)]);
-            e.setProgramStage("p" + new Random().nextInt(programStages.size()));
-            e.setEventDate(DateTime.now().minusDays(new Random().nextInt(666)));
-            events.add(e);
-        }
 
-        for (int i = 0; i < 30 + new Random().nextInt(150); i++) {
+        for (int i = 0; i < 100 + new Random().nextInt(400); i++) {
             Event e = new Event();
             e.setDisplayName("Event " + i);
             e.setUId("e" + i);
-            e.setStatus(Event.EventStatus.values()[new Random().nextInt(Event.EventStatus.values().length - 1)]);
-            e.setProgramStage("p" + new Random().nextInt(4));
+            e.setStatus(Event.EventStatus.values()[new Random().nextInt(Event.EventStatus.values().length)]);
+            e.setProgramStage("p" + new Random().nextInt(programStages.size()));
             e.setEventDate(
                     DateTime.now()
                             .minusDays(new Random().nextInt(666))
@@ -137,8 +127,8 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
 
         for (Event event : events) {
             if (programStage.getUId().equals(event.getProgramStage())) { //if event in prog stage:
-                // status of event
-                ReportEntity.Status status;
+                // syncStatus of event
+                ReportEntity.SyncStatus syncStatus;
                 // get state of event from database
                 //TODO: get the state's form the map:
                 //State state = stateMap.get(event.getId());
@@ -149,19 +139,19 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
                 //logger.d(TAG, "State action for event " + event + " is " + state.getAction());
                 switch (state.getAction()) {
                     case SYNCED: {
-                        status = ReportEntity.Status.SENT;
+                        syncStatus = ReportEntity.SyncStatus.SENT;
                         break;
                     }
                     case TO_POST: {
-                        status = ReportEntity.Status.TO_POST;
+                        syncStatus = ReportEntity.SyncStatus.TO_POST;
                         break;
                     }
                     case TO_UPDATE: {
-                        status = ReportEntity.Status.TO_UPDATE;
+                        syncStatus = ReportEntity.SyncStatus.TO_UPDATE;
                         break;
                     }
                     case ERROR: {
-                        status = ReportEntity.Status.ERROR;
+                        syncStatus = ReportEntity.SyncStatus.ERROR;
                         break;
                     }
                     default: {
@@ -172,9 +162,9 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
                 //Map<String, String> dataElementToValueMap = mapDataElementToValue(event.getDataValues());
                 Map<String, String> dataElementToValueMap = new HashMap<>();
                 dataElementToValueMap.put(Event.EVENT_DATE_KEY, event.getEventDate().toString(DateTimeFormat.forPattern(DATE_FORMAT)));
-                dataElementToValueMap.put(Event.STATUS_KEY, event.getStatus().toString());
+                dataElementToValueMap.put(Event.EVENT_STATUS, event.getStatus().toString());
                 //dataElementToValueMap.put("OrgUnit", event.getOrgUnit());
-                reportEntities.add(new ReportEntity(event.getUId(), status, dataElementToValueMap));
+                reportEntities.add(new ReportEntity(event.getUId(), syncStatus, dataElementToValueMap));
             }
         }
         return reportEntities;

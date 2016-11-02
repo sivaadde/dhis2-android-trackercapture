@@ -30,17 +30,17 @@ public class TeiWidgetPresenterImpl implements TeiWidgetPresenter {
         /* This test data crashes the app atm:
         ExpansionPanel indicatorsWidget = new ExpansionPanel("123", "Indicators", ExpansionPanel.Type.ACTION_NONE);
         ArrayList<ReportEntity> indicators = new ArrayList<ReportEntity>();
-        indicators.add(new ReportEntity("123", ReportEntity.Status.SENT, null));
-        indicators.add(new ReportEntity("124", ReportEntity.Status.SENT, null));
-        indicators.add(new ReportEntity("125", ReportEntity.Status.SENT, null));
+        indicators.add(new ReportEntity("123", ReportEntity.SyncStatus.SENT, null));
+        indicators.add(new ReportEntity("124", ReportEntity.SyncStatus.SENT, null));
+        indicators.add(new ReportEntity("125", ReportEntity.SyncStatus.SENT, null));
         indicatorsWidget.setChildren(indicators);
         widgets.add(indicatorsWidget);
 
         ExpansionPanel relationshipWidget = new ExpansionPanel("123", "Relationships", ExpansionPanel.Type.ACTION_ADD);
         ArrayList<ReportEntity> relationships = new ArrayList<ReportEntity>();
-        relationships.add(new ReportEntity("123", ReportEntity.Status.SENT, null));
-        relationships.add(new ReportEntity("124", ReportEntity.Status.SENT, null));
-        relationships.add(new ReportEntity("125", ReportEntity.Status.SENT, null));
+        relationships.add(new ReportEntity("123", ReportEntity.SyncStatus.SENT, null));
+        relationships.add(new ReportEntity("124", ReportEntity.SyncStatus.SENT, null));
+        relationships.add(new ReportEntity("125", ReportEntity.SyncStatus.SENT, null));
         relationshipWidget.setChildren(relationships);
         widgets.add(relationshipWidget);*/
 
