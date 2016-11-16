@@ -10,14 +10,16 @@ import org.hisp.dhis.android.app.R;
 import org.hisp.dhis.android.app.TrackerCaptureApp;
 import org.hisp.dhis.android.app.views.dashboard.dataentry.DataEntryContainerFragment;
 import org.hisp.dhis.android.app.views.dashboard.navigation.TeiNavigationFragment;
+import org.hisp.dhis.client.sdk.ui.activities.ReportEntitySelection;
 
 import javax.inject.Inject;
 
-public class TeiDashboardActivity extends FragmentActivity implements TeiDashboardView {
+public class TeiDashboardActivity extends FragmentActivity implements TeiDashboardView, ReportEntitySelection {
 
     @Inject
     TeiDashboardPresenter teiDashboardPresenter;
     private DrawerLayout drawerLayout;
+    private String selectedUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +54,8 @@ public class TeiDashboardActivity extends FragmentActivity implements TeiDashboa
             activityComponent = ((TrackerCaptureApp) getApplication()).getActivityComponent();
         }
 
-
         // inject dependencies
         activityComponent.inject(this);
-
     }
 
     @Override
@@ -88,4 +88,14 @@ public class TeiDashboardActivity extends FragmentActivity implements TeiDashboa
         }
     }
 
+    @Override
+    public void setSelectedUid(String uid) {
+        selectedUid = uid;
+        closeDrawer();
+    }
+
+    @Override
+    public String getSelectedUid() {
+        return selectedUid;
+    }
 }

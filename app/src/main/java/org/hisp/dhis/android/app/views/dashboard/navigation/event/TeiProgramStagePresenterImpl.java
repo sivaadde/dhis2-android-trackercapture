@@ -31,7 +31,7 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
 
     @Override
     public void drawProgramStages(String enrollmentUid) {
-        teiProgramStageView.drawProgramStages(getDummyProgramStages());
+        teiProgramStageView.drawProgramStages(generateDummyProgramStages());
     }
 
     @Override
@@ -50,7 +50,7 @@ public class TeiProgramStagePresenterImpl implements TeiProgramStagePresenter {
         teiProgramStageView = null;
     }
 
-    List<ExpansionPanel> getDummyProgramStages() {
+    List<ExpansionPanel> generateDummyProgramStages() {
         List<ExpansionPanel> expansionPanels = new ArrayList<>();
         //TODO: find the view holder for ReportEntities and update the icon according to the status.
         //TODO: Fix the "123"'s and so on to be the actual uid's and display the event name from the hashMap instead.
